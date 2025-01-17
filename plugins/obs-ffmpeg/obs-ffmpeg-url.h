@@ -46,7 +46,7 @@ typedef struct URLContext {
 //#define LOG_DEBUG 7 // issue w/ libobs
 #define LOG_PRIMASK 0x07
 
-#define LOG_PRI(p) ((p)&LOG_PRIMASK)
+#define LOG_PRI(p) ((p) & LOG_PRIMASK)
 #define LOG_MAKEPRI(fac, pri) (((fac) << 3) | (pri))
 
 #define LOG_KERN (0 << 3)
@@ -74,7 +74,7 @@ typedef struct URLContext {
 
 #define LOG_NFACILITIES 24
 #define LOG_FACMASK 0x03f8
-#define LOG_FAC(p) (((p)&LOG_FACMASK) >> 3)
+#define LOG_FAC(p) (((p) & LOG_FACMASK) >> 3)
 #endif
 #endif
 
@@ -109,8 +109,7 @@ typedef struct URLContext {
 #define SRT_LOGF_DISABLE_EOL 8
 
 // Handler type
-typedef void SRT_LOG_HANDLER_FN(void *opaque, int level, const char *file,
-				int line, const char *area,
+typedef void SRT_LOG_HANDLER_FN(void *opaque, int level, const char *file, int line, const char *area,
 				const char *message);
 
 #ifdef __cplusplus
@@ -137,6 +136,5 @@ enum type {
 	debug = 7 //issue w/ libobs so LOG_DEBUG is removed
 };
 }
-class Logger;
 } // namespace srt_logging
 #endif
