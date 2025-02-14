@@ -2,15 +2,11 @@ name: Run flatpak-builder-lint
 description: Runs flatpak-builder-lint with exceptions
 inputs:
   artifact:
-    description: Type of artifact to lint (builddir, repo, manifest)
+    description: Type of artifact to lint (builddir, repo, manifest, appstream)
     required: true
   path:
     description: Path to flatpak-builder manifest or Flatpak build directory
     required: true
-  validateToPublish:
-    description: If false, turns some errors to non-errors for non-publish workflow
-    required: false
-    default: true
   workingDirectory:
     description: Working directory to clone flatpak-builder-lint
     required: false
@@ -23,32 +19,10 @@ runs:
       working-directory: ${{ inputs.workingDirectory }}
       run: |
         : Check artifact input
-        case "${{ inputs.artifact }}" in
-          builddir);;
-          repo);;
-          manifest);;
-          *)
-            echo "::error::Given artifact type is incorrect"
-            exit 2
-            ;;
-        esac
-
-    - uses: actions/checkout@v4
-      with:
-        repository: flathub/flatpak-builder-lint
-        ref: v2.0.13
-        path: flatpak-builder-lint
-        set-safe-directory: ${{ inputs.workingDirectory }}
-
-    - name: Install Dependencies 🛍️
-      shell: bash
-      working-directory: ${{ inputs.workingDirectory }}
-      run: |
-        : Install Dependencies 🛍️
-        echo ::group::Install Dependencies
-        dnf install -y -q poetry jq
-        poetry -q -C flatpak-builder-lint install
-        echo ::endgroup::
+        if ! [[ "${{ inputs.artifact }}" =~ builddir|repo|manifest|appstream ]]; then
+          echo "::error::Given artifact type is incorrect"
+          exit 2
+        fi
 
     - name: Run flatpak-builder-lint
       id: result
@@ -56,28 +30,46 @@ runs:
       working-directory: ${{ inputs.workingDirectory }}
       run: |
         : Run flatpak-builder-lint
-        exit_code=0
-        ret=$(poetry -C flatpak-builder-lint run flatpak-builder-lint --exceptions ${{ inputs.artifact }} ${{ inputs.path }}) || exit_code=$?
-        if [[ $exit_code != 0 && -z "$ret" ]]; then
+
+        return=0
+        result="$(flatpak-builder-lint --exceptions ${{ inputs.artifact }} ${{ inputs.path }})" || return=$?
+
+        if [[ ${return} != 0 && -z "${result}" ]]; then
           echo "::error::Error while running flatpak-builder-lint"
           exit 2
         fi
 
-        for ((i = 0 ; i < $(echo $ret | jq '.warnings | length') ; i++)); do
-          warning=$(echo $ret | jq ".warnings[$i]")
-          echo "::warning::$warning found in the Flatpak ${{ inputs.artifact }}"
-        done
+        if [[ "${{ inputs.artifact }}" == "appstream" ]]; then
+          echo "${result}"
 
-        n_errors=$(echo $ret | jq '.errors | length')
-        for ((i = 0 ; i < $(echo $ret | jq '.errors | length') ; i++)); do
-          error=$(echo $ret | jq ".errors[$i]")
+          if [[ ${return} != 0 ]]; then echo "::error::Flatpak appstream info is not valid"; fi
 
-          if [[ "${{ inputs.validateToPublish }}" == "false" && "${error//\"}" == "appstream-screenshots-not-mirrored" ]]; then
-            echo "::notice::$error found and ignored in the Flatpak ${{ inputs.artifact }}"
-            n_errors=$(($n_errors-1))
-          else
-            echo "::error::$error found in the Flatpak ${{ inputs.artifact }}"
-          fi
-        done
+          exit ${return}
+        fi
 
-        [[ $n_errors == 0 ]] || exit 2
+        # This jq command selects any available array under the 'warnings' key in the JSON document
+        # or provides an empty array as a fallback if the key is not present. This array is then
+        # piped to the 'map' function to apply a transformation to every element in the array,
+        # converting it to a string prefixed with the output level, the actual element value, and
+        # finally the suffix string defined in 'template'.
+        #
+        # The result of this expression is concatenated with a similar expression doing the same
+        # but for the 'errors' key and its associated array.
+        #
+        # The second jq invocation then selects each element of the array and outputs it directly,
+        # which will be strings of the formats:
+        #
+        # * '::warning:: <original warning> <template text>'
+        # * '::error:: <original error> <template text>'
+        #
+        # If no warnings or errors were found, only empty arrays were used for 'map' and thus
+        # only an empty result array is generated.
+
+        template=" found in the Flatpak ${{ inputs.artifact }}"
+        while read -r log_line; do
+          if [[ "${log_line}" ]]; then echo "${log_line}"; fi
+        done <<< "$(echo "${result}" \
+          | jq -r '(.warnings // [] | try map("::warning:: " + . + "${template}")) + (.errors // [] | try map("::error:: " + . + "${template}"))' \
+          | jq -r '.[]')"
+
+        exit ${return}

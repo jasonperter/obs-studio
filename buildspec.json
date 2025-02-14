@@ -1,71 +1,52 @@
 {
     "dependencies": {
         "prebuilt": {
-            "version": "2024-01-27",
+            "version": "2024-09-12",
             "baseUrl": "https://github.com/obsproject/obs-deps/releases/download",
             "label": "Pre-Built obs-deps",
             "hashes": {
-                "macos-universal": "57a13557f7528e58743c4712dc25eb1c4558d36eeaca6f5361fe1f6cbfabe229",
-                "windows-x64": "d371f8cc81859b5321b66dcef00a207abbdff7373c722b761852cbc95664b4c9",
-                "windows-x86": "66a72428f404c69d6abac0b36fc89bb2ae4a8a6cb3bd14816a35b5ceb95d8769"
+                "macos-universal": "c857b211ee378772994b632036e1e5befe66b37e85286cb8e3cefc1435d5220a",
+                "windows-x64": "d4a4f194591766891ad3c0b267deec3c4b85239c8fe557273559927456aeedbb",
+                "windows-x86": "b7f1c46f0206d724f2edf73f74201e921a2652fa3f465ed47b949df08b6d48fe"
             }
         },
         "qt6": {
-            "version": "2024-01-27",
+            "version": "2024-09-12",
             "baseUrl": "https://github.com/obsproject/obs-deps/releases/download",
             "label": "Pre-Built Qt6",
             "hashes": {
-                "macos-universal": "86f6418c3e454b3979947fdba183aa7303ca9d7729c7056435bd023d466cf93a",
-                "windows-x64": "7a15c4b494bfe2df51cad16e7cbcfcc2b5b69b55839dd584c622214038c7d44c"
+                "macos-universal": "34a2de6b7f4d4d58fc5a15a4dba49a61d81a4045d0cedfc1a1f08c0dfb8047cf",
+                "windows-x64": "4d15ce13dbb0a8a2cabcce5ae0da5e80ee589b482a61b2025378465c1da32c4f"
             },
             "debugSymbols": {
-                "windows-x64": "ddf356ce20a4946f7522253b5da44ce7fe29398bb55ff74467431fb31e8ec645"
+                "windows-x64": "dad2351a5c9cd438168e1ed8fb453a2534532252edb555f1001a5e8eb3f1bbd4"
             }
         },
         "cef": {
-            "version": "5060",
+            "version": "6533",
             "baseUrl": "https://cdn-fastly.obsproject.com/downloads",
             "label": "Chromium Embedded Framework",
             "hashes": {
-                "macos-x86_64": "140bfd517b4b9d12343ac000abba7bb16eecefe80ecbd7225993d03f0b9c0603",
-                "macos-arm64": "3970a781132b033bb9be6a9fe328a07e97fa7737fdf1575b1c5db24a3e130da1",
-                "linux-x86_64": "1253a6a36c3b8ac5b5ece9bfdb6eae6ab75e49516375fc475e2e871795ad9bea",
-                "linux-aarch64": "66ebcfce94a4527c8dd085a685691d0c43291adab9f2be4f8a0762f4a614083a",
-                "windows-x64": "7480e9ed5688e09919db67237d130eef9a4c24df32ba2a7b8a5587de45ff8e69"
-            },
-            "revision": {
-                "macos-x86_64": 4,
-                "macos-arm64": 4,
-                "linux-x86_64": 3,
-                "linux-aarch64": 3,
-                "windows-x64": 3
+                "macos-x86_64": "139c6664b6c9c446e0b56f303586fa6bd4b3587bae4742e13967c2f0f99c8740",
+                "macos-arm64": "8e833fce815b83114ab381c055122a18dc415e29af5c4db0a577caf4b817baa2",
+                "ubuntu-x86_64": "fab66dfc9cfd2e26fb87798f855aef30c2004edc8e19570d37af555644ae1655",
+                "ubuntu-aarch64": "ab09f04e534306d3f301ea997c03a6a9f7bd245042d50a434f17c1c98ac64b89",
+                "windows-x64": "87b1033ff0f8f2fb7262d8a236bc36b981cb50d24b401c20cdf9b31099a9a217"
             }
         }
     },
     "tools": {
         "sparkle": {
-            "version": "2.5.2",
+            "version": "2.6.4",
             "baseUrl": "https://github.com/sparkle-project/Sparkle/releases/download",
             "label": "Sparkle 2",
-            "hash": "572dd67ae398a466f19f343a449e1890bac1ef74885b4739f68f979a8a89884b"
+            "hash": "50612a06038abc931f16011d7903b8326a362c1074dabccb718404ce8e585f0b"
         },
         "ccache-win": {
             "version": "4.8.1",
             "baseUrl": "https://github.com/ccache/ccache/releases/download/",
             "label": "Ccache for Windows x64",
             "hash": "ca59770e9f46b59d6bec6e7036a17a27d601a0a5a0a721fe8e03fea734ccf732"
-        }
-    },
-    "platformConfig": {
-        "macos-universal": {
-            "qtVersion": 6
-        },
-        "windows-x64": {
-            "qtVersion": 6
-        },
-        "linux-x86_64": {
-            "qtVersion": 6,
-            "generator": "Ninja"
         }
     },
     "name": "obs-studio"
